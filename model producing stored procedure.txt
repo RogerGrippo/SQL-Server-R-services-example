@@ -1,6 +1,6 @@
 ------ stored procedure to create a model for each facility using facility id  trained model as parameters to produce serialized model ------- for each facility. See additonal file for code to call this procedure
 
-ALTER PROCEDURE [dbo].[generate_volume_rxDForest_model] (@trained_model varbinary(max) OUTPUT,@FacilityID INT OUTPUT)
+CREATE PROCEDURE [dbo].[generate_volume_rxDForest_model] (@trained_model varbinary(max) OUTPUT,@FacilityID INT OUTPUT)
 
 AS
 
