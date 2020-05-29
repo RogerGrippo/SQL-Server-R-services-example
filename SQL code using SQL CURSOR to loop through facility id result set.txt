@@ -1,0 +1,26 @@
+--- run below code to generate model for all facilities
+
+TRUNCATE TABLE Encounter_rxDTree_models
+
+DECLARE @model VARBINARY(MAX);
+DECLARE @FacilityID INT;
+
+declare c1 CURSOR STATIC FOR 
+--- get all faciltity id's t
+Select DISTINCT Facility_ID FROM Enounters
+where Facility_ID is not null
+ORDER BY Facility_ID 
+
+open C1
+fetch next from c1 into @FacilityID
+  While @@fetch_status = 0
+    begin
+EXEC generate_volume_rxDForest_model @model OUTPUT,@FacilityID;
+INSERT INTO Encounter_rxDTree_models (Facility, model) VALUES(@FacilityID, @model);
+
+fetch next from c1 into @FacilityID
+    end
+close c1
+deallocate c1
+
+---- end generate code for all facilities
