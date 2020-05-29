@@ -1,0 +1,28 @@
+------ stored procedure to create a model for each facility using facility id and trained model parameters as parameters to produce serialized model for each facility
+
+ALTER PROCEDURE [dbo].[generate_volume_rxDForest_model] (@trained_model varbinary(max) OUTPUT,@FacilityID INT OUTPUT)
+
+AS
+
+
+BEGIN
+    EXECUTE sp_execute_external_script
+      @language = N'R'
+    , @script = N'
+        require("RevoScaleR");
+
+        
+        #Create a DTree model and train it using the training data set
+        model_DForest <- rxDForest(EncounterCount ~ WeekDayName + IsHoliday + MonthName , data = EncounterData);
+        #Before saving the model to the DB table, we need to serialize it
+        trained_model <- as.raw(serialize(model_DForest, connection=NULL));'
+
+    , @input_data_1 = N'select "EncounterCount", "WeekDayName", "IsHoliday", "MonthName" from  [dbo].[PedsVolume] where FACILITY_ID = @FacilityID AND convert(int,substring(convert(varchar,Date),1,4)+substring(convert(varchar,Date),6,2)) between 201801 and 201812'
+    , @input_data_1_name = N'EncounterData'
+    , @params = N'@trained_model varbinary(max) OUTPUT, @FacilityID INT OUTPUT'
+	,@FacilityID = @FacilityID OUTPUT
+    , @trained_model = @trained_model OUTPUT;
+
+END;
+
+GO
