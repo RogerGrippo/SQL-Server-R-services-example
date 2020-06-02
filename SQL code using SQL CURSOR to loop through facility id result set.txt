@@ -6,8 +6,8 @@ DECLARE @model VARBINARY(MAX);
 DECLARE @FacilityID INT;
 
 declare c1 CURSOR STATIC FOR 
---- get all faciltity id's t
-Select DISTINCT Facility_ID FROM Enounters
+--- get all faciltity id's
+Select DISTINCT Facility_ID FROM Encounters
 where Facility_ID is not null
 ORDER BY Facility_ID 
 
@@ -23,4 +23,4 @@ fetch next from c1 into @FacilityID
 close c1
 deallocate c1
 
----- end generate code for all facilities
+---- end generate serialized model for all facilities
