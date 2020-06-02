@@ -1,0 +1,1 @@
+CREATE TABLE Encouter_rxDTree_models (Facility Int,Model varbinary(max))
